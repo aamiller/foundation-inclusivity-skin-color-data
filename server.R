@@ -12,31 +12,28 @@ library(knitr)
 foundation_data <- read.csv("./data/cleaned_foundation_data.csv", stringsAsFactors = FALSE)
 foundation_data$Brand.Tier <- factor(foundation_data$Brand.Tier, levels = c("Uber Luxury", "Highend/Luxury", "Sephora/Ulta", "Drugstore"))
 
+
 # Server, handles user input and re-renders charts and tables
 shinyServer(function(input, output) {
   
   #returns a graph that shows adjust rating affect the passing rate
   output$shadepricegraph <- renderPlotly({
     filtered.data <- foundation_data
-    # Checkbox filters
-    if (input$showDrugstore == FALSE) {
-      filtered.data <- filter(filtered.data, Brand.Tier != "Drugstore")
-    }
-    if (input$showSephUlta == FALSE) {
-      data.with.factors <- filter(filtered.data, Brand.Tier != "Sephora/Ulta")
-    }
-    if (input$showHighend == FALSE) {
-      filtered.data <- filter(filtered.data, Brand.Tier != "Highend/Luxury")
-    }
-    if (input$showUberluxury == FALSE) {
-      filtered.data <- filter(filtered.data, Brand.Tier != "Uber Luxury")
-    }
-    if (input$showDeepshades == FALSE) {
-      filtered.data <- filter(filtered.data, Has.Darker.Shades != "1")
+    
+    filtered.data$Has.Darker.Shades[foundation_data$Has.Darker.Shades == 1] <- "Has darker shades"
+    filtered.data$Has.Darker.Shades[foundation_data$Has.Darker.Shades == 0] <- "No darker shades"
+    for(row in length(filtered.data$Has.Darker.Shades)) {
+      if (filtered.data$Has.Darker.Shades[row] == "Has darker shades") {
+      filtered.data$Brand.Tier[row] <- paste0(filtered.data$Brand.Tier[row], " Has Dark Shades")
+      } else {
+      filtered.data$Brand.Tier[row] <- paste0(filtered.data$Brand.Tier[row], " No Dark Shades")
+      }
     }
     
+   # filter.data <- filtered.data %>% filter(containsBrand.Tier)
+    
     shade.v.price.graph <- plot_ly(data = filtered.data, x = ~Shade.Range, y = ~Price.Ounce, color = ~Brand.Tier,
-                                   colors = "Set1", hoverinfo = "text", symbol = ~Has.Darker.Shades,symbols = c('x','o'),
+                                   colors = "Set1", hoverinfo = "text", symbol = ~Has.Darker.Shades,symbols = c('x','check'),
                                    text = ~paste('<b>Price per Ounce (USD)</b>: $', Price.USD, "<br><b>Number of Shades</b>: ", Shade.Range, "<br><b>Brand</b>:", Brand, "<br><b>Product Name</b>: ", Foundation)) %>%
                                    layout(xaxis = list(title = "Number of shades for product"), yaxis = list(title = "Price per ounce", range = c(0, 250)), height = 600)
     return(shade.v.price.graph)
@@ -66,11 +63,19 @@ shinyServer(function(input, output) {
     return(foundation_data)
   })
   
-  ## WIP
+  
   output$aggregatebrandcomparison <- renderPlotly({
-    filtered.data <- foundation_data %>% group_by(Brand) %>% summarize("Average Shades in Range" = mean(Shade.Range))
-    aggregate.brand.comparison.graph <- plot_ly(data = filtered.data, x = ~ Brand, y = ~ Shade.Range, hoverinfo = "text", 
-                                                text = ~paste('<b>Price per Ounce (USD)</b>: $', Price.USD, "<br><b>Number of Shades</b>: ", Shade.Range, "<br><b>Brand</b>:", Brand, "<br><b>Product Name</b>: ", Foundation))
+    filtered.data <- foundation_data %>% group_by(Brand) %>% summarise("Average.Shades.per.Foundation" = mean(Shade.Range)) %>% arrange(desc(Average.Shades.per.Foundation))
+    
+    # Add column for whether or not brand has any foundations with darker shades
+    # LA MER is filtered out by removing NAs
+    foundation_data$Has.Darker.Shades <- as.numeric(foundation_data$Has.Darker.Shades) # Fix type of 0s and ones so can be summed
+    filtered.data_has_darker_shades_sum <- foundation_data %>% group_by(Brand) %>% summarise("Foundations.with.darker.shades" = sum(Has.Darker.Shades, na.rm = TRUE)) %>% arrange(desc(Foundations.with.darker.shades))
+    
+    # Add column to main data
+    filtered.data$Foundations.with.darker.shades <- filtered.data_has_darker_shades_sum$Foundations.with.darker.shades
+    
+    aggregate.brand.comparison.graph <- ggplot(filtered.data, aes(x = Brand, y = Average.Shades.per.Foundation)) + geom_bar(stat="identity") + facet_wrap(~ Foundations.with.darker.shades)
     return(aggregate.brand.comparison.graph)
   })
   

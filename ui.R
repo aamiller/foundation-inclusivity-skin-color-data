@@ -35,12 +35,7 @@ shinyUI(shinyUI(navbarPage(theme = shinythemes::shinytheme("sandstone"),
                                       tags$p(class = "guide", strong("Sephora/Ulta --"), "NARS, Bobbi Brown, MAC etc.", align = "center"),
                                       tags$p(class = "guide", strong("High-end/Luxury -- "), "YSL, Lancôme etc.", align = "center"),
                                       tags$p(class = "guide", strong("Uber Luxury -- "), "La Mer, Siley etc.", align = "center"),
-                                      tags$p(class = "guide", "Brand descriptions collected from gills__'s original Reddit post and separated based on her designations. They are not ordered by price.", align = "center"),
-                                      checkboxInput('showDrugstore', "Show drugstore brands", value = TRUE),
-                                      checkboxInput('showSephUlta', "Show Sephora/Ulta brands", value = TRUE),
-                                      checkboxInput('showHighend', "Show High-end/Luxury brands", value = TRUE),
-                                      checkboxInput('showUberluxury', "Show Uber Luxury brands", value = TRUE),
-                                      checkboxInput('showDeepshades', "Show foundations with deep shades", value = TRUE)
+                                      tags$p(class = "guide", "Brand descriptions collected from gills__'s original Reddit post and separated based on her designations. They are not ordered by price. Foundations that gills__'s noted as 'sand at best' were not considered to have dark shades. Whether or not the foundation has dark shades is based on her comment in the data.", align = "center")
                                       )
                                       ),
                            tabPanel(h5("Shade vs. Price (2)"), 
