@@ -8,6 +8,7 @@ library(shinythemes)
 library(dplyr)
 library(scales)
 library(knitr)
+library(stringr)
 
 foundation_data <- read.csv("./data/cleaned_foundation_data.csv", stringsAsFactors = FALSE)
 foundation_data$Brand.Tier <- factor(foundation_data$Brand.Tier, levels = c("Uber Luxury", "Highend/Luxury", "Sephora/Ulta", "Drugstore"))
@@ -25,12 +26,12 @@ shinyServer(function(input, output) {
     for(row in length(filtered.data$Has.Darker.Shades)) {
       if (filtered.data$Has.Darker.Shades[row] == "Has darker shades") {
       filtered.data$Brand.Tier[row] <- paste0(filtered.data$Brand.Tier[row], " Has Dark Shades")
-      } else {
-      filtered.data$Brand.Tier[row] <- paste0(filtered.data$Brand.Tier[row], " No Dark Shades")
+      } else if(filtered.data$Has.Darker.Shades[row] == "No darker shades") {
+        if(is.na(filtered.data$Brand.Tier[row])) {
+          filtered.data$Brand.Tier[row] <- paste0(filtered.data$Brand.Tier[row], " No Dark Shades")
+        }
       }
     }
-    
-   # filter.data <- filtered.data %>% filter(containsBrand.Tier)
     
     shade.v.price.graph <- plot_ly(data = filtered.data, x = ~Shade.Range, y = ~Price.Ounce, color = ~Brand.Tier,
                                    colors = "Set1", hoverinfo = "text", symbol = ~Has.Darker.Shades,symbols = c('x','check'),
