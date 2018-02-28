@@ -51,6 +51,7 @@ shinyServer(function(input, output) {
   output$brandComparisonPlot <- renderPlotly({
     filtered.brand.data <- foundation_data %>% filter(Brand == input$brand1 | Brand == input$brand2 | Brand == input$brand3)
     filtered.brand.data$Brand <- factor(filtered.brand.data$Brand, levels = c(input$brand1, input$brand2, input$brand3))
+    
     color.list = c("paleturquoise3", "dodgerblue3", "mediumorchid3")
     brandComparisonPlot <- plot_ly(data = filtered.brand.data, x = ~Shade.Range, y = ~Price.Ounce, color = ~Brand,
                                    colors = color.list, hoverinfo = "text", 
@@ -73,11 +74,21 @@ shinyServer(function(input, output) {
     foundation_data$Has.Darker.Shades <- as.numeric(foundation_data$Has.Darker.Shades) # Fix type of 0s and ones so can be summed
     filtered.data_has_darker_shades_sum <- foundation_data %>% group_by(Brand) %>% summarise("Foundations.with.darker.shades" = sum(Has.Darker.Shades, na.rm = TRUE)) %>% arrange(desc(Foundations.with.darker.shades))
     
+    inclusive.foundation.percent.by.brand <- as.data.frame(brands)
+    inclusive.foundation.percent.by.brand$counts <- 0
+    for (brand in foundation_data$Brand) {
+      inclusive.foundation.percent.by.brand[inclusive.foundation.percent.by.brand$brand == brand, "counts"] <- inclusive.foundation.percent.by.brand[inclusive.foundation.percent.by.brand$brand == brand, "counts"] + 1
+    }
+    shade.count <- foundation_data %>% group_by(Brand) %>% summarise("Sum.Shades" = sum(Shade.Range))
+    
+    
+    
     # Add column to main data
     filtered.data$Foundations.with.darker.shades <- filtered.data_has_darker_shades_sum$Foundations.with.darker.shades
     
     aggregate.brand.comparison.graph <- ggplot(filtered.data, aes(x = Brand, y = Average.Shades.per.Foundation)) + geom_bar(stat="identity") + facet_wrap(~ Foundations.with.darker.shades)
     return(aggregate.brand.comparison.graph)
   })
+  
   
 })

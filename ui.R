@@ -30,7 +30,7 @@ shinyUI(shinyUI(navbarPage(theme = shinythemes::shinytheme("sandstone"),
                                     
                                     #sidebar panel for explanation about different rating 
                                     sidebarPanel(
-                                      tags$h2(class = "header", "Content Ratings Guide", align = "center"),
+                                      tags$h2(class = "header", "Brand Guide", align = "center"),
                                       tags$p(class = "guide", strong("Drugstore -- "), "Maybelline, L'oreal, Revlon etc.", align = "center"),
                                       tags$p(class = "guide", strong("Sephora/Ulta --"), "NARS, Bobbi Brown, MAC etc.", align = "center"),
                                       tags$p(class = "guide", strong("High-end/Luxury -- "), "YSL, Lancôme etc.", align = "center"),
@@ -46,12 +46,12 @@ shinyUI(shinyUI(navbarPage(theme = shinythemes::shinytheme("sandstone"),
                                     
                                     #sidebar panel for explanation about different rating 
                                     sidebarPanel(
-                                      tags$h2(class = "header", "Content Ratings Guide", align = "center"),
+                                      tags$h2(class = "header", "Brand Guide", align = "center"),
                                       tags$p(class = "guide", strong("Drugstore -- "), "Maybelline, L'oreal, Revlon etc.", align = "center"),
                                       tags$p(class = "guide", strong("Sephora/Ulta --"), "NARS, Bobbi Brown, MAC etc.", align = "center"),
                                       tags$p(class = "guide", strong("High-end/Luxury -- "), "YSL, Lancôme etc.", align = "center"),
                                       tags$p(class = "guide", strong("Uber Luxury -- "), "La Mer, Siley etc.", align = "center"),
-                                      tags$p(class = "guide", "Brand descriptions collected from gills__'s original Reddit post and separated based on her designations. They are not ordered by price.", align = "center")                                    )
+                                      tags$p(class = "guide", "Brand descriptions collected from gills__'s original Reddit post and separated based on her designations. They are not ordered by price. Click on items in the legend to filter out those points.", align = "center")                                    )
                            ),
                            
                            # Profit/Budget tab 
@@ -111,20 +111,10 @@ shinyUI(shinyUI(navbarPage(theme = shinythemes::shinytheme("sandstone"),
                                         )
                                         ),
                            
-                           tabPanel(h5("Shade Range by Brand"), 
+                           tabPanel(h5("Best and Worst Brands"), 
                                     tags$h3(class = "header",'Shade Range by Brand'),
                                     mainPanel(
                                       plotlyOutput('aggregatebrandcomparison')
-                                    ),
-                                    
-                                    #sidebar panel for explanation about different rating 
-                                    sidebarPanel(
-                                      tags$h2(class = "header", "Content Ratings Guide", align = "center"),
-                                      tags$p(class = "guide", strong("Drugstore -- "), "Maybelline, L'oreal, Revlon etc.", align = "center"),
-                                      tags$p(class = "guide", strong("Sephora/Ulta --"), "NARS, Bobbi Brown, MAC etc.", align = "center"),
-                                      tags$p(class = "guide", strong("High-end/Luxury -- "), "YSL, Lancôme etc.", align = "center"),
-                                      tags$p(class = "guide", strong("Uber Luxury -- "), "La Mer, Siley etc.", align = "center"),
-                                      tags$p(class = "guide", "Brand descriptions collected from gills__'s original Reddit post and separated based on her designations. They are not ordered by price.", align = "center")
                                     )
                            ),
                            
